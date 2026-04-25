@@ -628,13 +628,19 @@ document.addEventListener("DOMContentLoaded", async () => {
   tipoRefeicaoEl.addEventListener("change", atualizarObrigatoriedadeObservacao);
   atualizarObrigatoriedadeObservacao();
 
-  const matriculaSalva = localStorage.getItem("matricula");
+  if (!isLogged()) {
+  logout();
+}
 
-  if (!matriculaSalva) {
-    alert("Matrícula não encontrada. Faça login novamente.");
-    window.location.href = "https://coec-epb.github.io/login/";
-    return;
-  }
+const user = getUser();
+
+if (!user || !user.matricula) {
+  alert("Sessão inválida. Faça login novamente.");
+  logout();
+  return;
+}
+
+const matriculaSalva = user.matricula;
 
   matricula.value = matriculaSalva;
   matricula.readOnly = true;
