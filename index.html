@@ -581,18 +581,29 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
-  const primeiroDiaMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
-  primeiroDiaMes.setHours(0, 0, 0, 0);
+// ==========================
+// REGRA PARA TRÁS
+// ==========================
+let minDate;
 
-  let minDate = new Date(primeiroDiaMes);
+if (hoje.getDate() <= 10) {
+  // Pode voltar 31 dias
+  minDate = new Date(hoje);
+  minDate.setDate(hoje.getDate() - 31);
+} else {
+  // Bloqueia mês anterior (começa do dia 1 do mês atual)
+  minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+}
 
-  if (hoje.getDate() <= 3) {
-    minDate = new Date(hoje);
-    minDate.setDate(hoje.getDate() - 3);
-  }
+// ==========================
+// REGRA PARA FRENTE
+// ==========================
+const maxDate = new Date(hoje);
+maxDate.setDate(hoje.getDate() + 6);
 
-  const maxDate = new Date(hoje);
-  maxDate.setDate(hoje.getDate() + 3);
+// Aplica no input
+dataUsoInput.min = toISODate(minDate);
+dataUsoInput.max = toISODate(maxDate);
 
   dataUsoInput.min = toISODate(minDate);
   dataUsoInput.max = toISODate(maxDate);
