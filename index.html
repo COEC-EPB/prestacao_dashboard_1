@@ -589,7 +589,7 @@ let minDate;
 if (hoje.getDate() <= 10) {
   // Pode voltar 31 dias
   minDate = new Date(hoje);
-  minDate.setDate(hoje.getDate() - 31);
+  minDate.setDate(hoje.getDate() - 41);
 } else {
   // Bloqueia mês anterior (começa do dia 1 do mês atual)
   minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
