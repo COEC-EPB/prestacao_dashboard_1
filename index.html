@@ -592,7 +592,7 @@ if (hoje.getDate() <= 10) {
   minDate.setDate(hoje.getDate() - 51);
 } else {
   // Bloqueia mês anterior (começa do dia 1 do mês atual)
-  minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+  minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 15);
 }
 
 // ==========================
