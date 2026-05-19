@@ -755,13 +755,14 @@ document.getElementById("btnGeo").addEventListener("click", () => {
     { enableHighAccuracy: true, timeout: 10000 }
   );
 });
-console.log("ANTES DO ENVIO:", {
-  regional: document.getElementById("regional").value,
-  polo: document.getElementById("polo").value
-})
+
 document.getElementById("addForm").addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  console.log("ANTES DO ENVIO:", {
+  regional: document.getElementById("regional").value,
+  polo: document.getElementById("polo").value
+})
   const btn = document.getElementById("btnSubmit");
   btn.disabled = true;
   btn.innerText = "Enviando...";
