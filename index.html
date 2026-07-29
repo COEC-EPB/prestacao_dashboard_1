@@ -861,8 +861,10 @@ await authFetch(`${API}/auditoria`, {
   })
 }).catch(console.error);
 
-const resp = await authFetch(
-  `${API}/submit`,
+const resp = await authFetch(`${API}/submit`, {
+  method: "POST",
+  body: fd
+});
 
 
     let result = {};
