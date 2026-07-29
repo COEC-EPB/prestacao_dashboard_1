@@ -844,20 +844,6 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     for (const [k, v] of Object.entries(payload)) {
       fd.append(k, v);
     }
-
-    await authFetch(`${API}/auditoria`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    evento: "TENTOU_ENVIAR",
-    detalhes: {
-      datauso: payload.datauso,
-      tiporefeicao: payload.tiporefeicao
-    }
-  })
-});
     
     const resp = await authFetch(
   `${API}/submit`,
@@ -884,25 +870,28 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     }
 
     if (!resp.ok || result.ok === false) {
-      alert(result.error || "Erro ao enviar registro.");
-      btn.disabled = false;
-      btn.innerText = "Enviar Registro";
-      return;
-    }
+  await authFetch(`${API}/auditoria`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      evento: "ENVIO_ERRO",
+      detalhes: {
+        datauso: payload.datauso,
+        tiporefeicao: payload.tiporefeicao,
+        mensagem: result.error || "Erro ao enviar registro."
+      }
+    })
+  }).catch(console.error);
 
-    await authFetch(`${API}/auditoria`, {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    evento: "ENVIO_ERRO",
-    detalhes: {
-      mensagem: result.error || err.message
-    }
-  })
-});
-    await authFetch(`${API}/auditoria`, {
+  alert(result.error || "Erro ao enviar registro.");
+  btn.disabled = false;
+  btn.innerText = "Enviar Registro";
+  return;
+}
+
+await authFetch(`${API}/auditoria`, {
   method: "POST",
   headers: {
     "Content-Type": "application/json"
@@ -914,9 +903,9 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       tiporefeicao: payload.tiporefeicao
     }
   })
-});
+}).catch(console.error);
 
-    alert("✅ Registro enviado com sucesso.");
+alert("✅ Registro enviado com sucesso.");
     setTimeout(() => {
       window.location.href = "https://coec-epb.github.io/ADD";
     }, 500);
