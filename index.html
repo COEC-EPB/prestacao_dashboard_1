@@ -588,6 +588,20 @@ document.addEventListener("DOMContentLoaded", async () => {
   const hoje = new Date();
   hoje.setHours(0, 0, 0, 0);
 
+  try {
+  await authFetch(`${API}/auditoria`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      evento: "ABRIU_FORMULARIO"
+    })
+  });
+} catch(err){
+  console.error(err);
+}
+
 // ==========================
 // REGRA PARA TRÁS
 // ==========================
@@ -831,6 +845,20 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       fd.append(k, v);
     }
 
+    await authFetch(`${API}/auditoria`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    evento: "TENTOU_ENVIAR",
+    detalhes: {
+      datauso: payload.datauso,
+      tiporefeicao: payload.tiporefeicao
+    }
+  })
+});
+    
     const resp = await authFetch(
   `${API}/submit`,
   { method: "POST", body: fd }
@@ -861,6 +889,32 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
       btn.innerText = "Enviar Registro";
       return;
     }
+
+    await authFetch(`${API}/auditoria`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    evento: "ENVIO_ERRO",
+    detalhes: {
+      mensagem: result.error || err.message
+    }
+  })
+});
+    await authFetch(`${API}/auditoria`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    evento: "ENVIO_SUCESSO",
+    detalhes: {
+      datauso: payload.datauso,
+      tiporefeicao: payload.tiporefeicao
+    }
+  })
+});
 
     alert("✅ Registro enviado com sucesso.");
     setTimeout(() => {
