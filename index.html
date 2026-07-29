@@ -910,9 +910,24 @@ alert("✅ Registro enviado com sucesso.");
       window.location.href = "https://coec-epb.github.io/ADD";
     }, 500);
 
-  } catch (err) {
-  await authFetch(`${API}/auditoria`, {
-    method
+      } catch (err) {
+    await authFetch(`${API}/auditoria`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        evento: "ENVIO_ERRO",
+        detalhes: {
+          mensagem: err.message || "Erro inesperado no navegador"
+        }
+      })
+    }).catch(console.error);
+
+    alert("Erro inesperado: " + err.message);
+    btn.disabled = false;
+    btn.innerText = "Enviar Registro";
+  }
 });
 </script>
 </body>
