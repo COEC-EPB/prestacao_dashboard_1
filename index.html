@@ -911,10 +911,8 @@ alert("✅ Registro enviado com sucesso.");
     }, 500);
 
   } catch (err) {
-    alert("Erro inesperado: " + err.message);
-    btn.disabled = false;
-    btn.innerText = "Enviar Registro";
-  }
+  await authFetch(`${API}/auditoria`, {
+    method
 });
 </script>
 </body>
