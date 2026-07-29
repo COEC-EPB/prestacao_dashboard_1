@@ -841,14 +841,29 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     console.log("PAYLOAD COMPLETO:", payload);
     console.log("POLO INPUT:", document.getElementById("polo").value);
     const fd = new FormData();
-    for (const [k, v] of Object.entries(payload)) {
-      fd.append(k, v);
+for (const [k, v] of Object.entries(payload)) {
+  fd.append(k, v);
+}
+
+await authFetch(`${API}/auditoria`, {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    evento: "TENTOU_ENVIAR",
+    detalhes: {
+      datauso: payload.datauso,
+      tiporefeicao: payload.tiporefeicao,
+      polo: payload.polo,
+      localidade: payload.localidade
     }
-    
-    const resp = await authFetch(
+  })
+}).catch(console.error);
+
+const resp = await authFetch(
   `${API}/submit`,
-  { method: "POST", body: fd }
-);
+
 
     let result = {};
     try {
@@ -856,18 +871,48 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     } catch {}
 
     if (resp.status === 409) {
-      alert("Já existe uma prestação registrada para esta data.");
-      btn.disabled = false;
-      btn.innerText = "Enviar Registro";
-      return;
-    }
+  await authFetch(`${API}/auditoria`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      evento: "ENVIO_ERRO",
+      detalhes: {
+        datauso: payload.datauso,
+        tiporefeicao: payload.tiporefeicao,
+        mensagem: "Já existe uma prestação registrada para esta data."
+      }
+    })
+  }).catch(console.error);
+
+  alert("Já existe uma prestação registrada para esta data.");
+  btn.disabled = false;
+  btn.innerText = "Enviar Registro";
+  return;
+}
 
     if (resp.status === 403) {
-      alert(result.error || "Este dia está bloqueado para lançamento.");
-      btn.disabled = false;
-      btn.innerText = "Enviar Registro";
-      return;
-    }
+  await authFetch(`${API}/auditoria`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      evento: "ENVIO_ERRO",
+      detalhes: {
+        datauso: payload.datauso,
+        tiporefeicao: payload.tiporefeicao,
+        mensagem: result.error || "Este dia está bloqueado para lançamento."
+      }
+    })
+  }).catch(console.error);
+
+  alert(result.error || "Este dia está bloqueado para lançamento.");
+  btn.disabled = false;
+  btn.innerText = "Enviar Registro";
+  return;
+}
 
     if (!resp.ok || result.ok === false) {
   await authFetch(`${API}/auditoria`, {
