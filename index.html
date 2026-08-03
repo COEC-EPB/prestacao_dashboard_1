@@ -605,29 +605,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 // ==========================
 // REGRA PARA TRÁS
 // ==========================
-// ==========================
-
 let minDate;
 
 if (hoje.getDate() <= 10) {
-
-  // primeiro dia do mês anterior
-  minDate = new Date(
-    hoje.getFullYear(),
-    hoje.getMonth() - 1,
-    1
-  );
-
+  // Pode voltar 31 dias
+  minDate = new Date(hoje);
+  minDate.setDate(hoje.getDate() - 41);
 } else {
-
-  // primeiro dia do mês atual
-  minDate = new Date(
-    hoje.getFullYear(),
-    hoje.getMonth(),
-    1
-  );
-
-
+  // Bloqueia mês anterior (começa do dia 1 do mês atual)
+  minDate = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+}
 
 // ==========================
 // REGRA PARA FRENTE
